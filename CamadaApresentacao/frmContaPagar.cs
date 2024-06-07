@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CamadaNegocio;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace CamadaApresentacao
 {
@@ -72,28 +75,108 @@ namespace CamadaApresentacao
 
         private void button2_Click(object sender, EventArgs e)
         {
-            frmImprimirAPagar frmim = new frmImprimirAPagar();
+            string empresa;
+            string produto;
+            string data;
+            decimal valor;
+            decimal total = 0;
+            int entradas = 0;
+           
 
-            foreach (DataGridViewRow row in dataLista.Rows)
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            Document.Create(container =>
             {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(2, Unit.Centimetre);
+                    page.PageColor(Colors.White);
 
-             
+                    page.Header()
+                        .Text("Faeterj - Relatório de Contas a Pagar")
+                        .FontSize(40);
+                    page.Content()
+                    .Column(X => {
+                        X.Item()
+                            .Text("--------------------------------------------\n");
+
+                        //imprime cada entrada separado
+                        foreach (DataGridViewRow row in dataLista.Rows)
+                        {
+
+                            empresa = Convert.ToString(row.Cells["Empresa"].Value);
+                            produto = Convert.ToString(row.Cells["Produto"].Value);
+                            data = Convert.ToString(row.Cells["data"].Value);
+                            valor = Convert.ToDecimal(row.Cells["Total"].Value);
 
 
-               
-                frmim.im1 = Convert.ToString(this.dataLista.CurrentRow.Cells["Empresa"].Value);
-                frmim.im2 = Convert.ToString(this.dataLista.CurrentRow.Cells["Produto"].Value);
-                frmim.im3 = Convert.ToString(this.dataLista.CurrentRow.Cells["data"].Value);
-                frmim.im4 = Convert.ToString(this.dataLista.CurrentRow.Cells["Total"].Value);
+
+                            if (Convert.ToBoolean(row.Cells[0].Value))
+                            {
+
+                                X.Item()
+                          .Text("Nome da empresa: " + empresa);
+                                X.Item()
+                                .Text("produto Comprado: " + produto);
+
+                                X.Item()
+                                .Text("data: " + data);
+
+                                X.Item()
+                                .Text("Total devido: R$ " + valor);
+
+                                X.Item()
+                                .Text("--------------------------------------------\n");
+
+                                total += valor;
+                                entradas += 1;
+                            }
+                        }
+                        X.Item()
+                       .Text("Numero de entradas = " + entradas);
+                        X.Item()
+                        .Text("Total: R$ " + total);
+
+                    }
+                    );
 
 
-                frmim.setImprimirAPagar(frmim.im1, frmim.im2, frmim.im3, frmim.im4);
+                });
+
+
+
+            })
+                .GeneratePdf(filePath: "C:\\Users\\rafae\\OneDrive\\Área de Trabalho/arquivoRelatorioContasaPagar.pdf");
+
+            MessageBox.Show("Relatório Gerado com Sucesso!");
+
+
+
+        }
+
+        private void chkDeletar_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkDeletar.Checked)
+            {
+                this.dataLista.Columns[0].Visible = true;
 
 
             }
+            else
+            {
+                this.dataLista.Columns[0].Visible = false;
+            }
+        }
 
-
-            frmim.Show();
+        private void dataLista_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == dataLista.Columns["Selecionar"].Index)
+            {
+                //marcar uma celula de gridview
+                DataGridViewCheckBoxCell ChkDeletar = (DataGridViewCheckBoxCell)dataLista.Rows[e.RowIndex].Cells["Selecionar"];
+                ChkDeletar.Value = !Convert.ToBoolean(ChkDeletar.Value);
+            }
         }
     }
 }

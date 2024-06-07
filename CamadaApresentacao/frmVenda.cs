@@ -9,8 +9,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CamadaNegocio;
 using Microsoft.Reporting.WinForms;
+using QuestPDF.Infrastructure;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using QuestPDF.Previewer;
+using CamadaDados;
+using static QuestPDF.Helpers.Colors;
 namespace CamadaApresentacao
 {
     public partial class frmVenda : Form
@@ -490,35 +496,182 @@ namespace CamadaApresentacao
 
         private void btnImprimir_Click(object sender, EventArgs e)
         {
-            frmImprimirVenda frmim = new frmImprimirVenda();
 
-            foreach (DataGridViewRow row in dataLista.Rows)
+
+            string nome;
+            string data;
+            string comprovante;
+            decimal total=0;
+            decimal totalvenda;
+            int entradas = 0;
+
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            Document.Create(container =>
             {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(2, Unit.Centimetre);
+                    page.PageColor(Colors.White);
 
-                string nome;
-                string data;
-                string comprovante;
-                string total;
+                    page.Header()
+                        .Text("Faeterj - Relatório de vendas:" )
+                        .FontSize(40);
+                    page.Content()
+                    .Column(X => {
+                        X.Item()
+                            .Text("--------------------------------------------\n");
 
-                
-                // frmim.setimprimirvenda(par1, par2, par3, par4);
-
-                frmim.im1 = Convert.ToString(this.dataLista.CurrentRow.Cells["Cliente"].Value);
-                frmim.im2 = Convert.ToString(this.dataLista.CurrentRow.Cells["data"].Value);
-                frmim.im3 = Convert.ToString(this.dataLista.CurrentRow.Cells["tipo_comprovante"].Value);
-                frmim.im4 = Convert.ToString(this.dataLista.CurrentRow.Cells["total"].Value);
-
-
-                frmim.setimprimirvenda(frmim.im1, frmim.im2, frmim.im3, frmim.im4);
+                        //imprime cada cliente separado
+                        foreach (DataGridViewRow row in dataLista.Rows)
+                        {
+                            nome = Convert.ToString(row.Cells["Cliente"].Value);
+                            data = Convert.ToString(row.Cells["data"].Value);
+                            comprovante = Convert.ToString(row.Cells["tipo_comprovante"].Value);
+                            totalvenda = Convert.ToDecimal(row.Cells["total"].Value);
 
 
-            }
 
-            
-            frmim.Show();
+                            if (Convert.ToBoolean(row.Cells[0].Value))
+                            {
+                               
+                                X.Item()
+                          .Text("Nome do Cliente: " + nome);
+                                X.Item()
+                                .Text("Data da Venda: " + data);
+
+                                X.Item()
+                                .Text("Tipo Comprovante" + comprovante);
+
+                                X.Item()
+                                .Text("Total dessa venda: R$ " + totalvenda);
+
+                                X.Item()
+                                .Text("--------------------------------------------\n");
+
+                                total += totalvenda;
+                                entradas += 1;
+                            }
+                        }
+                        X.Item()
+                       .Text("Numero de vendas selecionadas = " + entradas);
+                        X.Item()
+                        .Text("Total: R$ " + total);
+
+                    }
+                    );
+
+
+                });
+
+
+
+            })
+                .GeneratePdf(filePath: "C:\\Users\\rafae\\OneDrive\\Área de Trabalho/arquivoRelatorioVendas.pdf");
+
+            MessageBox.Show("Relatório Gerado com Sucesso!");
+
+
+           
         }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
 
 
+
+            decimal total =0;
+            int entradas =0;
+            DateTime data;
+            string cliente;
+            string comprovante;
+            string correlativo;
+            string nomeproduto;
+            int quantidade;
+            string valorunico;
+            //pega a data da coluna marcada
+            data = Convert.ToDateTime(this.dataLista.CurrentRow.Cells["data"].Value);
+            
+            QuestPDF.Settings.License = LicenseType.Community;
+        
+            Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(2, Unit.Centimetre);
+                    page.PageColor(Colors.White);
+
+                    page.Header()
+                        .Text("Faeterj - Relatório do dia: "  + data.ToString("dd/MM/yyyy"))
+                        .FontSize(40);
+                    page.Content()
+                    .Column(X => {
+                        X.Item()
+                            .Text("--------------------------------------------\n");
+
+                        //imprime cada cliente separado
+                        foreach (DataGridViewRow row in dataLista.Rows)
+                        {
+                            cliente = Convert.ToString(row.Cells["Cliente"].Value);
+                            comprovante = Convert.ToString(row.Cells["tipo_comprovante"].Value);
+                            correlativo = Convert.ToString(row.Cells["correlativo"].Value);
+                            valorunico = Convert.ToString(row.Cells["Total"].Value);
+                            nomeproduto = Convert.ToString(row.Cells["nome_produto"].Value);
+                            quantidade = Convert.ToInt32(row.Cells["quantidade"].Value);
+
+
+
+                            if (Convert.ToBoolean(row.Cells[0].Value))
+                            {
+                               
+
+                                X.Item()
+                          .Text("Nome do Cliente: " + cliente);
+                                X.Item()
+                                .Text("Comprovante: " + comprovante);
+
+                                X.Item()
+                               .Text("Produto: " + nomeproduto + "  " + "Quantidade: " + quantidade) ;
+
+                                X.Item()
+                                .Text("Forma de pagamento: " + correlativo);
+
+                                X.Item()
+                                .Text("Total dessa venda: " + valorunico);
+
+                                X.Item()
+                                .Text("--------------------------------------------\n");
+                                
+
+                                total += Convert.ToDecimal(row.Cells[9].Value);
+                                entradas += 1;
+                            }
+
+                        }
+
+
+                        
+                        X.Item()
+                       .Text("Total de vendas do dia: " + entradas);
+                        X.Item()
+                        .Text("Total: R$ " + total) ;
+
+                    }
+                    );
+
+
+                });
+
+
+
+            })
+                .GeneratePdf(filePath: "C:\\Users\\rafae\\OneDrive\\Área de Trabalho/arquivoRelatoriodiário.pdf");
+
+            MessageBox.Show("Relatório Gerado com Sucesso!");
+
+
+        }
     }
 }

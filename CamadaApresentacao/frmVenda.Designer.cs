@@ -53,6 +53,7 @@
             txtIdProduto = new TextBox();
             TabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            button2 = new Button();
             button1 = new Button();
             dtFinal = new DateTimePicker();
             dtInicial = new DateTimePicker();
@@ -338,6 +339,7 @@
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(button2);
             tabPage1.Controls.Add(button1);
             tabPage1.Controls.Add(dtFinal);
             tabPage1.Controls.Add(dtInicial);
@@ -358,9 +360,20 @@
             tabPage1.Text = "Listar";
             tabPage1.UseVisualStyleBackColor = true;
             // 
+            // button2
+            // 
+            button2.Location = new Point(1298, 54);
+            button2.Margin = new Padding(2);
+            button2.Name = "button2";
+            button2.Size = new Size(169, 52);
+            button2.TabIndex = 12;
+            button2.Text = "Fluxo diário";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
             // button1
             // 
-            button1.Location = new Point(1100, 54);
+            button1.Location = new Point(1087, 54);
             button1.Margin = new Padding(2);
             button1.Name = "button1";
             button1.Size = new Size(169, 52);
@@ -416,7 +429,7 @@
             dataLista.AllowUserToOrderColumns = true;
             dataLista.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataLista.Columns.AddRange(new DataGridViewColumn[] { Deletar });
-            dataLista.Location = new Point(138, 214);
+            dataLista.Location = new Point(4, 197);
             dataLista.Margin = new Padding(2);
             dataLista.MultiSelect = false;
             dataLista.Name = "dataLista";
@@ -773,7 +786,7 @@
             // 
             AutoScaleDimensions = new SizeF(15F, 37F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1768, 1011);
+            ClientSize = new Size(1811, 1042);
             Controls.Add(TabControl1);
             Controls.Add(label1);
             Margin = new Padding(2);
@@ -859,5 +872,6 @@
         private TextBox txtParcelas;
         private Label label18;
         private DataGridViewCheckBoxColumn Deletar;
+        private Button button2;
     }
 }

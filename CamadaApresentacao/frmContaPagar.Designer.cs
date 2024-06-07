@@ -33,14 +33,16 @@
             txtNome = new TextBox();
             label1 = new Label();
             dataLista = new DataGridView();
+            Selecionar = new DataGridViewCheckBoxColumn();
             lblTotal = new Label();
             button2 = new Button();
+            chkDeletar = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)dataLista).BeginInit();
             SuspendLayout();
             // 
             // button1
             // 
-            button1.Location = new Point(443, 131);
+            button1.Location = new Point(567, 136);
             button1.Margin = new Padding(6, 7, 6, 7);
             button1.Name = "button1";
             button1.Size = new Size(161, 57);
@@ -52,7 +54,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(11, 145);
+            label2.Location = new Point(208, 143);
             label2.Margin = new Padding(2, 0, 2, 0);
             label2.Name = "label2";
             label2.Size = new Size(90, 37);
@@ -61,7 +63,7 @@
             // 
             // txtNome
             // 
-            txtNome.Location = new Point(137, 138);
+            txtNome.Location = new Point(324, 143);
             txtNome.Margin = new Padding(6, 7, 6, 7);
             txtNome.Name = "txtNome";
             txtNome.Size = new Size(210, 43);
@@ -87,6 +89,7 @@
             dataLista.AllowUserToDeleteRows = false;
             dataLista.AllowUserToOrderColumns = true;
             dataLista.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataLista.Columns.AddRange(new DataGridViewColumn[] { Selecionar });
             dataLista.Location = new Point(11, 204);
             dataLista.Margin = new Padding(2);
             dataLista.MultiSelect = false;
@@ -96,12 +99,21 @@
             dataLista.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataLista.Size = new Size(1183, 395);
             dataLista.TabIndex = 24;
+            dataLista.CellContentClick += dataLista_CellContentClick;
             dataLista.CellDoubleClick += dataLista_CellDoubleClick;
+            // 
+            // Selecionar
+            // 
+            Selecionar.HeaderText = "Selecionar";
+            Selecionar.MinimumWidth = 11;
+            Selecionar.Name = "Selecionar";
+            Selecionar.ReadOnly = true;
+            Selecionar.Width = 225;
             // 
             // lblTotal
             // 
             lblTotal.AutoSize = true;
-            lblTotal.Location = new Point(861, 165);
+            lblTotal.Location = new Point(977, 165);
             lblTotal.Margin = new Padding(2, 0, 2, 0);
             lblTotal.Name = "lblTotal";
             lblTotal.Size = new Size(90, 37);
@@ -110,7 +122,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(643, 131);
+            button2.Location = new Point(767, 136);
             button2.Margin = new Padding(6, 7, 6, 7);
             button2.Name = "button2";
             button2.Size = new Size(161, 57);
@@ -119,11 +131,24 @@
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
+            // chkDeletar
+            // 
+            chkDeletar.AutoSize = true;
+            chkDeletar.Location = new Point(11, 159);
+            chkDeletar.Margin = new Padding(2);
+            chkDeletar.Name = "chkDeletar";
+            chkDeletar.Size = new Size(171, 41);
+            chkDeletar.TabIndex = 29;
+            chkDeletar.Text = "Selecionar";
+            chkDeletar.UseVisualStyleBackColor = true;
+            chkDeletar.CheckedChanged += chkDeletar_CheckedChanged;
+            // 
             // frmContaPagar
             // 
             AutoScaleDimensions = new SizeF(15F, 37F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1208, 616);
+            ClientSize = new Size(1228, 650);
+            Controls.Add(chkDeletar);
             Controls.Add(button2);
             Controls.Add(button1);
             Controls.Add(label2);
@@ -148,5 +173,7 @@
         private DataGridView dataLista;
         private Label lblTotal;
         private Button button2;
+        private CheckBox chkDeletar;
+        private DataGridViewCheckBoxColumn Selecionar;
     }
 }

@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CamadaNegocio;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace CamadaApresentacao
 {
@@ -469,32 +472,99 @@ namespace CamadaApresentacao
 
         private void btnImprimir_Click(object sender, EventArgs e)
         {
-            frmImprimirCompra frmim = new frmImprimirCompra();
+            string funcionario;
+            string fornecedor;
+            string data;
+            string tipo_comprovante;
+            string correlativo;
+            decimal valor;
+            decimal total = 0;
+            int entradas = 0;
+            
 
-            foreach (DataGridViewRow row in dataLista.Rows)
+
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            Document.Create(container =>
             {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(2, Unit.Centimetre);
+                    page.PageColor(Colors.White);
 
-                string funcionario;
-                string fornecedor;
-                string data;
-                string tipo_comprovante;
-                string correlativo;
-                string total;
-                
+                    page.Header()
+                        .Text("Faeterj - Relatório de Compras:")
+                        .FontSize(40);
+                    page.Content()
+                    .Column(X => {
+                        X.Item()
+                            .Text("--------------------------------------------\n");
 
-                frmim.im1 = Convert.ToString(this.dataLista.CurrentRow.Cells["Funcionario"].Value);
-                frmim.im2 = Convert.ToString(this.dataLista.CurrentRow.Cells["Fornecedor"].Value);
-                frmim.im3 = Convert.ToString(this.dataLista.CurrentRow.Cells["data"].Value);
-                frmim.im4 = Convert.ToString(this.dataLista.CurrentRow.Cells["tipo_comprovante"].Value);
-                frmim.im5 = Convert.ToString(this.dataLista.CurrentRow.Cells["correlativo"].Value);
-                frmim.im6 = Convert.ToString(this.dataLista.CurrentRow.Cells["Total"].Value);
-                frmim.setImprimirCompra(frmim.im1, frmim.im2, frmim.im3, frmim.im4 , frmim.im5, frmim.im6);
+                        //imprime cada cliente separado
+                        foreach (DataGridViewRow row in dataLista.Rows)
+                        {
+                            funcionario = Convert.ToString(row.Cells["Funcionario"].Value);
+                            fornecedor = Convert.ToString(row.Cells["Fornecedor"].Value);
+                            data = Convert.ToString(row.Cells["data"].Value);
+                            tipo_comprovante = Convert.ToString(this.dataLista.CurrentRow.Cells["tipo_comprovante"].Value);
+                            correlativo = Convert.ToString(row.Cells["correlativo"].Value);
+                            valor= Convert.ToDecimal(row.Cells["Total"].Value);
 
 
-            }
+
+                            if (Convert.ToBoolean(row.Cells[0].Value))
+                            {
+
+                                X.Item()
+                          .Text("Nome do Funcionario: " + funcionario);
+                                X.Item()
+                                .Text("Fornecedor " + fornecedor);
+
+                                X.Item()
+                                .Text("Data da Compra: " + data);
+
+                                X.Item()
+                                .Text("Comprovante da Venda: " + tipo_comprovante);
+
+                                if(correlativo == "PAGO")
+                                {
+                                    correlativo = "Crédito";
+                                }
+
+                                X.Item()
+                               .Text("Tipo de pagamento: " + correlativo);
+
+                                X.Item()
+                              .Text("Valor da compra: R$ " + valor);
+
+                                X.Item()
+                                .Text("--------------------------------------------\n");
+
+                                total += valor;
+                                entradas += 1;
+                            }
+                        }
+                        X.Item()
+                       .Text("Numero de compras selecionadas = " + entradas);
+                        X.Item()
+                        .Text("Total: R$ " + total);
+
+                    }
+                    );
 
 
-            frmim.Show();
+                });
+
+
+
+            })
+                .GeneratePdf(filePath: "C:\\Users\\rafae\\OneDrive\\Área de Trabalho/arquivoRelatoriodeCompras.pdf");
+
+            MessageBox.Show("Relatório Gerado com Sucesso!");
+
+
+
         }
     }
 }

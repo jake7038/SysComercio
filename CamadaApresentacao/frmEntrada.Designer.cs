@@ -80,13 +80,13 @@
             label9 = new Label();
             chkDeletar = new CheckBox();
             dataLista = new DataGridView();
-            Deletar = new DataGridViewCheckBoxColumn();
             lblTotal = new Label();
             btnImprimir = new Button();
             btnDeletar = new Button();
             btnBuscar = new Button();
             label2 = new Label();
             tabPage2 = new TabPage();
+            Deletar = new DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)errorIcone).BeginInit();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DataListaDetalhes).BeginInit();
@@ -626,9 +626,9 @@
             chkDeletar.Location = new Point(17, 133);
             chkDeletar.Margin = new Padding(2);
             chkDeletar.Name = "chkDeletar";
-            chkDeletar.Size = new Size(126, 41);
+            chkDeletar.Size = new Size(171, 41);
             chkDeletar.TabIndex = 7;
-            chkDeletar.Text = "Anular";
+            chkDeletar.Text = "Selecionar";
             chkDeletar.UseVisualStyleBackColor = true;
             chkDeletar.CheckedChanged += chkDeletar_CheckedChanged;
             // 
@@ -651,14 +651,6 @@
             dataLista.TabIndex = 6;
             dataLista.CellContentClick += dataLista_CellContentClick;
             dataLista.DoubleClick += dataLista_DoubleClick;
-            // 
-            // Deletar
-            // 
-            Deletar.HeaderText = "Anular";
-            Deletar.MinimumWidth = 11;
-            Deletar.Name = "Deletar";
-            Deletar.ReadOnly = true;
-            Deletar.Width = 225;
             // 
             // lblTotal
             // 
@@ -725,6 +717,14 @@
             tabPage2.Text = "Configurar";
             tabPage2.UseVisualStyleBackColor = true;
             // 
+            // Deletar
+            // 
+            Deletar.HeaderText = "Selecionar";
+            Deletar.MinimumWidth = 11;
+            Deletar.Name = "Deletar";
+            Deletar.ReadOnly = true;
+            Deletar.Width = 225;
+            // 
             // frmEntrada
             // 
             AutoScaleDimensions = new SizeF(15F, 37F);
@@ -783,7 +783,6 @@
         private TextBox txtIdProduto;
         private Label label4;
         private Label label9;
-        private DataGridViewCheckBoxColumn Deletar;
         private DateTimePicker dtFinal;
         private DateTimePicker dtInicial;
         private DateTimePicker dtData;
@@ -811,5 +810,6 @@
         private DataGridView DataListaDetalhes;
         private Button button1;
         private ComboBox cbCorrelativo;
+        private DataGridViewCheckBoxColumn Deletar;
     }
 }

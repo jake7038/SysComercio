@@ -8,6 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CamadaNegocio;
+using QuestPDF.Infrastructure;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using QuestPDF.Previewer;
+using CamadaDados;
 
 namespace CamadaApresentacao
 {
@@ -75,32 +81,96 @@ namespace CamadaApresentacao
 
         private void button2_Click(object sender, EventArgs e)
         {
-            frmImprimirParcela frmim = new frmImprimirParcela();
+            
 
-            foreach (DataGridViewRow row in dataLista.Rows)
+            string cliente;
+            string parcelamentos;
+            string data_limite;
+            string parcela;
+            decimal total =0;
+            int entradas=0;
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            Document.Create(container =>
             {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(2, Unit.Centimetre);
+                    page.PageColor(Colors.White);
 
-                string cliente;
-                string parcelamentos;
-                string data_limite;
-                string parcela;
+                    page.Header()
+                        .Text("Faeterj - Relatório de parcelamenot dos clientes: ")
+                        .FontSize(40);
+                    page.Content()
+                    .Column(X => {
+                        X.Item()
+                            .Text("--------------------------------------------\n");
+
+                        //imprime cada cliente separado
+                        foreach (DataGridViewRow row in dataLista.Rows)
+                        {
+
+                            cliente = Convert.ToString(row.Cells["Cliente"].Value);
+                            parcelamentos = Convert.ToString(row.Cells["parcelamentos"].Value);
+                            data_limite = Convert.ToString(row.Cells["data_limite"].Value);
+                            parcela = Convert.ToString(row.Cells["Parcelas"].Value);
+                           
 
 
-                // frmim.setimprimirvenda(par1, par2, par3, par4);
-
-                frmim.im1 = Convert.ToString(this.dataLista.CurrentRow.Cells["Cliente"].Value);
-                frmim.im2 = Convert.ToString(this.dataLista.CurrentRow.Cells["parcelamentos"].Value);
-                frmim.im3 = Convert.ToString(this.dataLista.CurrentRow.Cells["data_limite"].Value);
-                frmim.im4 = Convert.ToString(this.dataLista.CurrentRow.Cells["Parcelas"].Value);
 
 
-                frmim.setImprimirParcela(frmim.im1, frmim.im2, frmim.im3, frmim.im4);
+                            if (Convert.ToBoolean(row.Cells[0].Value))
+                            {
 
 
-            }
+                                X.Item()
+                          .Text("Nome do Cliente: " + cliente);
+                                X.Item()
+                                .Text("Numero de parcelas: " + parcelamentos);
+
+                                X.Item()
+                                .Text("Data de vencimento: " + data_limite);
+
+                                X.Item()
+                                .Text("Valor de cada parcela: R$ " + parcela);
+
+                                X.Item()
+                                .Text("Valor Total: R$ " + (Convert.ToDecimal(parcela) * Convert.ToDecimal(parcelamentos)));
+
+                                X.Item()
+                                .Text("--------------------------------------------\n");
+
+                                total += ( (Convert.ToDecimal(row.Cells[5].Value)) * (Convert.ToDecimal(row.Cells[3].Value)));
+                                entradas += 1;
+                               
+                            }
+
+                        }
 
 
-            frmim.Show();
+
+                        X.Item()
+                       .Text("Total de clientes que parcelaram: " + entradas);
+                        X.Item()
+                        .Text("Total de todas as parcelas: R$ " + total);
+
+                    }
+                    );
+
+
+                });
+
+
+
+            })
+                .GeneratePdf(filePath: "C:\\Users\\rafae\\OneDrive\\Área de Trabalho/arquivoRelatorioParcelas.pdf");
+
+            MessageBox.Show("Relatório Gerado com Sucesso!");
+
+
+
+           
         }
     }
 }
